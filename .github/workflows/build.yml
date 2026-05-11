@@ -56,5 +56,5 @@ jobs:
         run: npm install
 
       - name: Compilar frontend
-        working-directory: ./frontend
+        working-directory: ./rednorte-frontend
         run: npm run build
