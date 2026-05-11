@@ -52,7 +52,7 @@ jobs:
           node-version: 22
 
       - name: Instalar dependencias
-        working-directory: ./frontend
+        working-directory: ./rednorte-frontend
         run: npm install
 
       - name: Compilar frontend
