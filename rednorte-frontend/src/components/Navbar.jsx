@@ -50,6 +50,11 @@ const Navbar = () => {
             </NavLink>
           </>
         )}
+        {session && (admin || doctor) && (
+        <NavLink to="/reportes">
+          Reportes
+        </NavLink>
+      )}
 
         {session && doctor && (
           <>
