@@ -38,11 +38,9 @@ jobs:
         run: mvn clean package -DskipTests
 
   build-frontend:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Clonar repositorio
         uses: actions/checkout@v4
 
