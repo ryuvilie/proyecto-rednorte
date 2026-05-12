@@ -4,7 +4,7 @@ services:
 
   gestionclinica:
     build:
-      context: ./gestionclinica/gestionclinica
+      context: ./gestionclinica
     container_name: gestionclinica
     ports:
       - "8081:8081"

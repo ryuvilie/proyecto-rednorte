@@ -192,6 +192,10 @@ public class BffService {
         );
     }
 
+    public void eliminarCita(Long id) {
+        restTemplate.delete(gestionClinicaUrl + "/citas/" + id);
+    }
+
     // =========================
     // SOPORTE
     // =========================

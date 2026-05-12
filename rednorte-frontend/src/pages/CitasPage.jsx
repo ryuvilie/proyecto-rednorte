@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerCitas } from "../services/citaService";
+import { obtenerCitas, eliminarCita } from "../services/citaService";
 import { Link } from "react-router-dom";
 import { esAdmin, obtenerSesion } from "../services/authService";
 
@@ -39,6 +39,23 @@ const CitasPage = () => {
     }
   };
 
+  const handleEliminar = async (id) => {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar esta cita médica?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+      await eliminarCita(id);
+
+      setCitas((prev) => prev.filter((cita) => cita.id !== id));
+    } catch (err) {
+      console.error("Error eliminando cita:", err);
+      alert("No se pudo eliminar la cita.");
+    }
+  };
+
   return (
     <main>
       <div className="card">
@@ -62,9 +79,7 @@ const CitasPage = () => {
         {loading && <p>Cargando citas...</p>}
 
         {error && (
-          <p style={{ color: "red" }}>
-            Error al conectar con el backend.
-          </p>
+          <p style={{ color: "red" }}>Error al conectar con el backend.</p>
         )}
 
         {!loading && !error && (
@@ -82,11 +97,14 @@ const CitasPage = () => {
                     <div className="appointment-header">
                       <div>
                         <h2>
-                          {cita.listaEspera?.paciente?.nombre}{" "}
-                          {cita.listaEspera?.paciente?.apellido}
+                          {cita.listaEspera?.paciente
+                            ? `${cita.listaEspera.paciente.nombre} ${cita.listaEspera.paciente.apellido}`
+                            : "Hora disponible"}
                         </h2>
+
                         <p>
                           {cita.listaEspera?.especialidad ||
+                            cita.doctor?.especialidad ||
                             "Especialidad no registrada"}
                         </p>
                       </div>
@@ -102,24 +120,41 @@ const CitasPage = () => {
                       <span>
                         <strong>Fecha:</strong> {cita.fechaCita}
                       </span>
+
                       <span>
                         <strong>Hora:</strong> {cita.horaCita}
                       </span>
+
                       <span>
                         <strong>Médico:</strong>{" "}
                         {cita.doctor
                           ? `${cita.doctor.nombre} ${cita.doctor.apellido}`
                           : "Doctor no asignado"}
                       </span>
+
                       <span>
                         <strong>Especialidad:</strong>{" "}
-                        {cita.doctor?.especialidad || cita.listaEspera?.especialidad || "No registrada"}
+                        {cita.doctor?.especialidad ||
+                          cita.listaEspera?.especialidad ||
+                          "No registrada"}
                       </span>
+
                       <span>
                         <strong>Establecimiento:</strong>{" "}
                         {cita.establecimiento}
                       </span>
                     </div>
+
+                    {admin && (
+                      <div className="actions">
+                        <button
+                          className="btn-danger"
+                          onClick={() => handleEliminar(cita.id)}
+                        >
+                          Eliminar cita
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

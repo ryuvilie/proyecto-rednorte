@@ -139,6 +139,11 @@ public class BffController {
         return bffService.reservarCitaPaciente(citaId, pacienteId);
     }
 
+    @DeleteMapping("/citas/{id}")
+    public void eliminarCita(@PathVariable Long id) {
+        bffService.eliminarCita(id);
+    }
+
     // =========================
     // SOPORTE
     // =========================

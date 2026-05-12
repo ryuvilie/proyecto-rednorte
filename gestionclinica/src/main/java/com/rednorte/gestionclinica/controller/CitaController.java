@@ -52,4 +52,9 @@ public class CitaController {
     ) {
         return citaService.reservarCitaPaciente(citaId, pacienteId);
     }
+
+    @DeleteMapping("/{id}")
+        public void eliminarCita(@PathVariable Long id) {
+            citaService.eliminarCita(id);
+    }
 }

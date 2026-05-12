@@ -14,3 +14,9 @@ export const crearCita = (cita) => {
 export const obtenerCitasDoctor = (doctorId) => {
   return bffApiClient(`/citas/doctor/${doctorId}`);
 };
+
+export const eliminarCita = (id) => {
+  return bffApiClient(`/citas/${id}`, {
+    method: "DELETE",
+  });
+};

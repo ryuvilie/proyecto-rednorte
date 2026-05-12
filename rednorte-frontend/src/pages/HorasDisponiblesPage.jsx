@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   obtenerHorasDisponibles,
   reservarHora,
+  eliminarCita,
 } from "../services/disponibilidadService";
 import { obtenerSesion } from "../services/authService";
 
@@ -24,7 +25,6 @@ const HorasDisponiblesPage = () => {
       setMensaje("");
 
       const horasData = await obtenerHorasDisponibles();
-
       setHoras(horasData);
     } catch (err) {
       console.error(err);
@@ -49,13 +49,33 @@ const HorasDisponiblesPage = () => {
     }
   };
 
+  const handleEliminar = async (citaId) => {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar esta hora médica?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+      setError("");
+      setMensaje("");
+
+      await eliminarCita(citaId);
+
+      setMensaje("Hora eliminada correctamente.");
+      await cargarDatos();
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo eliminar la hora.");
+    }
+  };
+
   return (
     <main>
       <div className="card">
         <div className="page-header">
           <div>
             <h1>Horas Disponibles</h1>
-
             <p>
               Revisa las horas médicas disponibles y reserva una atención médica.
             </p>
@@ -105,18 +125,28 @@ const HorasDisponiblesPage = () => {
                   </span>
 
                   <span>
-                    <strong>Establecimiento:</strong>{" "}
-                    {hora.establecimiento}
+                    <strong>Establecimiento:</strong> {hora.establecimiento}
                   </span>
                 </div>
 
                 <div className="actions">
-                  <button
-                    className="btn-primary"
-                    onClick={() => handleReservar(hora.id)}
-                  >
-                    Reservar hora
-                  </button>
+                  {session?.rol === "PACIENTE" && (
+                    <button
+                      className="btn-primary"
+                      onClick={() => handleReservar(hora.id)}
+                    >
+                      Reservar hora
+                    </button>
+                  )}
+
+                  {session?.rol === "ADMIN_CLINICA" && (
+                    <button
+                      className="btn-danger"
+                      onClick={() => handleEliminar(hora.id)}
+                    >
+                      Eliminar hora
+                    </button>
+                  )}
                 </div>
               </li>
             ))}

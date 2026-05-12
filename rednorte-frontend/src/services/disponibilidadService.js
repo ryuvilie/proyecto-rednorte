@@ -12,3 +12,9 @@ export const reservarHora = async (citaId, pacienteId) => {
     }
   );
 };
+
+export const eliminarCita = (id) => {
+  return bffApiClient(`/citas/${id}`, {
+    method: "DELETE",
+  });
+};

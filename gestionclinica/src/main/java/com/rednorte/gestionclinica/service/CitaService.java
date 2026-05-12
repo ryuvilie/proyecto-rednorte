@@ -124,4 +124,11 @@ public class CitaService {
 
         return citaRepository.save(cita);
     }
+
+    public void eliminarCita(Long id) {
+        Cita cita = citaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        citaRepository.delete(cita);
+    }
 }
