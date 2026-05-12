@@ -9,7 +9,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/notificaciones")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://54.83.181.63:5173"
+})
 public class NotificacionController {
 
     private final NotificacionService notificacionService;
