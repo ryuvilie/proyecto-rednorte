@@ -10,7 +10,7 @@ const HomePage = () => {
     <main>
       <section className="hero-home hospital-hero">
         <div className="hero-content">
-          <span className="badge">Servicio de Salud RedNorte</span>
+          <span className="badge">HOLA</span>
 
           <h1>Plataforma Inteligente de Gestión Hospitalaria</h1>
 
