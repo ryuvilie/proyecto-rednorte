@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = {
     "http://localhost:3000",
     "http://localhost:5173",
-    "http://54.83.181.63:5173"
+    "http://32.197.111.18:5173"
 })
 public class BffController {
 
