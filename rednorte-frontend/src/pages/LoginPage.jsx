@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../services/authService";
+import { validarEmail, validarPassword } from "../utils/validations";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -8,11 +9,33 @@ const LoginPage = () => {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [errores, setErrores] = useState({});
   const [cargando, setCargando] = useState(false);
+
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!validarEmail(correo)) {
+      nuevosErrores.correo = "Ingrese un correo válido.";
+    }
+
+    if (!validarPassword(password)) {
+      nuevosErrores.password = "La contraseña debe tener al menos 4 caracteres.";
+    }
+
+    setErrores(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!validarFormulario()) {
+      return;
+    }
+
     setCargando(true);
 
     try {
@@ -46,10 +69,17 @@ const LoginPage = () => {
             <input
               type="email"
               value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
+              onChange={(e) => {
+                setCorreo(e.target.value);
+                setError("");
+                setErrores({ ...errores, correo: "" });
+              }}
               placeholder="admin@rednorte.cl"
-              required
+              className={errores.correo ? "input-error" : ""}
             />
+            {errores.correo && (
+              <small className="error-text">{errores.correo}</small>
+            )}
           </label>
 
           <label>
@@ -57,10 +87,17 @@ const LoginPage = () => {
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+                setErrores({ ...errores, password: "" });
+              }}
               placeholder="Ingresa tu contraseña"
-              required
+              className={errores.password ? "input-error" : ""}
             />
+            {errores.password && (
+              <small className="error-text">{errores.password}</small>
+            )}
           </label>
 
           <button type="submit" className="btn-primary" disabled={cargando}>

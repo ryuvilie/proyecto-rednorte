@@ -605,3 +605,16 @@ p {
 .report-table tr:hover {
   background-color: #f9fafb;
 }
+
+.input-error {
+  border: 1px solid #d93025 !important;
+  background-color: #fff5f5;
+}
+
+.error-text {
+  color: #d93025;
+  font-size: 0.85rem;
+  margin-top: -8px;
+  margin-bottom: 8px;
+  display: block;
+}

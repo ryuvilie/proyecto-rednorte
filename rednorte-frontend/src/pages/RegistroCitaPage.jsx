@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { crearCita } from "../services/citaService";
 import { bffApiClient } from "../api/apiClient";
+import {
+  validarCampoObligatorio,
+  validarFecha,
+} from "../utils/validations";
 
 const RegistroCitaPage = () => {
   const [doctores, setDoctores] = useState([]);
@@ -11,6 +15,8 @@ const RegistroCitaPage = () => {
     horaCita: "",
     establecimiento: "",
   });
+
+  const [errores, setErrores] = useState({});
 
   useEffect(() => {
     cargarDoctores();
@@ -25,19 +31,60 @@ const RegistroCitaPage = () => {
     }
   };
 
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!validarCampoObligatorio(form.doctorId)) {
+      nuevosErrores.doctorId = "Debe seleccionar un doctor.";
+    }
+
+    if (!validarFecha(form.fechaCita)) {
+      nuevosErrores.fechaCita = "La fecha de la cita es obligatoria.";
+    }
+
+    if (!validarCampoObligatorio(form.horaCita)) {
+      nuevosErrores.horaCita = "La hora de la cita es obligatoria.";
+    }
+
+    if (!validarCampoObligatorio(form.establecimiento)) {
+      nuevosErrores.establecimiento = "El establecimiento es obligatorio.";
+    }
+
+    setErrores(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
+    });
+
+    setErrores({
+      ...errores,
+      [e.target.name]: "",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!validarFormulario()) {
+      return;
+    }
+
     const doctorSeleccionado = doctores.find(
       (d) => d.id === Number(form.doctorId)
     );
+
+    if (!doctorSeleccionado) {
+      setErrores({
+        ...errores,
+        doctorId: "El doctor seleccionado no es válido.",
+      });
+      return;
+    }
 
     const payload = {
       fechaCita: form.fechaCita,
@@ -61,6 +108,8 @@ const RegistroCitaPage = () => {
         horaCita: "",
         establecimiento: "",
       });
+
+      setErrores({});
     } catch (error) {
       console.error("Error al crear hora:", error);
       alert("Error al crear hora médica.");
@@ -82,33 +131,41 @@ const RegistroCitaPage = () => {
             name="doctorId"
             value={form.doctorId}
             onChange={handleChange}
-            required
+            className={errores.doctorId ? "input-error" : ""}
           >
             <option value="">Seleccionar doctor</option>
 
             {doctores.map((doctor) => (
               <option key={doctor.id} value={doctor.id}>
-                {doctor.nombre} {doctor.apellido} -{" "}
-                {doctor.especialidad}
+                {doctor.nombre} {doctor.apellido} - {doctor.especialidad}
               </option>
             ))}
           </select>
+          {errores.doctorId && (
+            <small className="error-text">{errores.doctorId}</small>
+          )}
 
           <input
             type="date"
             name="fechaCita"
             value={form.fechaCita}
             onChange={handleChange}
-            required
+            className={errores.fechaCita ? "input-error" : ""}
           />
+          {errores.fechaCita && (
+            <small className="error-text">{errores.fechaCita}</small>
+          )}
 
           <input
             type="time"
             name="horaCita"
             value={form.horaCita}
             onChange={handleChange}
-            required
+            className={errores.horaCita ? "input-error" : ""}
           />
+          {errores.horaCita && (
+            <small className="error-text">{errores.horaCita}</small>
+          )}
 
           <input
             type="text"
@@ -116,8 +173,11 @@ const RegistroCitaPage = () => {
             placeholder="Establecimiento"
             value={form.establecimiento}
             onChange={handleChange}
-            required
+            className={errores.establecimiento ? "input-error" : ""}
           />
+          {errores.establecimiento && (
+            <small className="error-text">{errores.establecimiento}</small>
+          )}
 
           <button type="submit" className="btn-primary">
             Crear hora disponible

@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { obtenerPacientes } from "../services/pacienteService";
 import { crearListaEspera } from "../services/listaEsperaService";
+import {
+  validarCampoObligatorio,
+  validarFecha,
+} from "../utils/validations";
 
 const RegistroListaEsperaPage = () => {
   const [pacientes, setPacientes] = useState([]);
@@ -12,6 +16,8 @@ const RegistroListaEsperaPage = () => {
     fechaIngreso: "",
     pacienteId: "",
   });
+
+  const [errores, setErrores] = useState({});
 
   useEffect(() => {
     cargarPacientes();
@@ -26,15 +32,48 @@ const RegistroListaEsperaPage = () => {
     }
   };
 
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!validarCampoObligatorio(form.pacienteId)) {
+      nuevosErrores.pacienteId = "Debe seleccionar un paciente.";
+    }
+
+    if (!validarCampoObligatorio(form.especialidad)) {
+      nuevosErrores.especialidad = "La especialidad es obligatoria.";
+    }
+
+    if (!validarCampoObligatorio(form.prioridad)) {
+      nuevosErrores.prioridad = "La prioridad es obligatoria.";
+    }
+
+    if (!validarFecha(form.fechaIngreso)) {
+      nuevosErrores.fechaIngreso = "La fecha de ingreso es obligatoria.";
+    }
+
+    setErrores(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    setErrores({
+      ...errores,
+      [e.target.name]: "",
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) {
+      return;
+    }
 
     const payload = {
       especialidad: form.especialidad,
@@ -42,7 +81,7 @@ const RegistroListaEsperaPage = () => {
       estado: form.estado,
       fechaIngreso: form.fechaIngreso,
       paciente: {
-        id: form.pacienteId,
+        id: Number(form.pacienteId),
       },
     };
 
@@ -58,6 +97,8 @@ const RegistroListaEsperaPage = () => {
         fechaIngreso: "",
         pacienteId: "",
       });
+
+      setErrores({});
     } catch (error) {
       console.error("Error al crear solicitud:", error);
       alert("Error al crear solicitud");
@@ -74,7 +115,7 @@ const RegistroListaEsperaPage = () => {
             name="pacienteId"
             value={form.pacienteId}
             onChange={handleChange}
-            required
+            className={errores.pacienteId ? "input-error" : ""}
           >
             <option value="">Seleccionar paciente</option>
             {pacientes.map((p) => (
@@ -83,6 +124,9 @@ const RegistroListaEsperaPage = () => {
               </option>
             ))}
           </select>
+          {errores.pacienteId && (
+            <small className="error-text">{errores.pacienteId}</small>
+          )}
 
           <input
             type="text"
@@ -90,8 +134,11 @@ const RegistroListaEsperaPage = () => {
             placeholder="Especialidad"
             value={form.especialidad}
             onChange={handleChange}
-            required
+            className={errores.especialidad ? "input-error" : ""}
           />
+          {errores.especialidad && (
+            <small className="error-text">{errores.especialidad}</small>
+          )}
 
           <input
             type="text"
@@ -99,16 +146,22 @@ const RegistroListaEsperaPage = () => {
             placeholder="Prioridad (Alta, Media, Baja)"
             value={form.prioridad}
             onChange={handleChange}
-            required
+            className={errores.prioridad ? "input-error" : ""}
           />
+          {errores.prioridad && (
+            <small className="error-text">{errores.prioridad}</small>
+          )}
 
           <input
             type="date"
             name="fechaIngreso"
             value={form.fechaIngreso}
             onChange={handleChange}
-            required
+            className={errores.fechaIngreso ? "input-error" : ""}
           />
+          {errores.fechaIngreso && (
+            <small className="error-text">{errores.fechaIngreso}</small>
+          )}
 
           <button type="submit" className="btn-primary">
             Registrar

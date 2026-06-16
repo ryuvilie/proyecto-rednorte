@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { register } from "../services/authService";
+import {
+  validarCampoObligatorio,
+  validarEmail,
+  validarTelefono,
+  validarRut,
+  validarFecha,
+  validarPassword,
+} from "../utils/validations";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,7 +24,44 @@ const RegisterPage = () => {
   });
 
   const [error, setError] = useState("");
+  const [errores, setErrores] = useState({});
   const [cargando, setCargando] = useState(false);
+
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    if (!validarRut(form.rut)) {
+      nuevosErrores.rut = "Ingrese un RUT válido.";
+    }
+
+    if (!validarCampoObligatorio(form.nombre)) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    }
+
+    if (!validarCampoObligatorio(form.apellido)) {
+      nuevosErrores.apellido = "El apellido es obligatorio.";
+    }
+
+    if (!validarFecha(form.fechaNacimiento)) {
+      nuevosErrores.fechaNacimiento = "La fecha de nacimiento es obligatoria.";
+    }
+
+    if (!validarTelefono(form.telefono)) {
+      nuevosErrores.telefono = "Ingrese un teléfono válido de al menos 8 números.";
+    }
+
+    if (!validarEmail(form.correo)) {
+      nuevosErrores.correo = "Ingrese un correo válido.";
+    }
+
+    if (!validarPassword(form.password)) {
+      nuevosErrores.password = "La contraseña debe tener al menos 5 caracteres.";
+    }
+
+    setErrores(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
 
   const handleChange = (e) => {
     setForm({
@@ -25,10 +70,20 @@ const RegisterPage = () => {
     });
 
     setError("");
+
+    setErrores({
+      ...errores,
+      [e.target.name]: "",
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) {
+      return;
+    }
+
     setCargando(true);
 
     try {
@@ -60,8 +115,9 @@ const RegisterPage = () => {
                 value={form.rut}
                 onChange={handleChange}
                 placeholder="12345678-9"
-                required
+                className={errores.rut ? "input-error" : ""}
               />
+              {errores.rut && <small className="error-text">{errores.rut}</small>}
             </label>
 
             <label>
@@ -70,8 +126,11 @@ const RegisterPage = () => {
                 name="nombre"
                 value={form.nombre}
                 onChange={handleChange}
-                required
+                className={errores.nombre ? "input-error" : ""}
               />
+              {errores.nombre && (
+                <small className="error-text">{errores.nombre}</small>
+              )}
             </label>
 
             <label>
@@ -80,8 +139,11 @@ const RegisterPage = () => {
                 name="apellido"
                 value={form.apellido}
                 onChange={handleChange}
-                required
+                className={errores.apellido ? "input-error" : ""}
               />
+              {errores.apellido && (
+                <small className="error-text">{errores.apellido}</small>
+              )}
             </label>
 
             <label>
@@ -91,7 +153,11 @@ const RegisterPage = () => {
                 name="fechaNacimiento"
                 value={form.fechaNacimiento}
                 onChange={handleChange}
+                className={errores.fechaNacimiento ? "input-error" : ""}
               />
+              {errores.fechaNacimiento && (
+                <small className="error-text">{errores.fechaNacimiento}</small>
+              )}
             </label>
 
             <label>
@@ -100,7 +166,11 @@ const RegisterPage = () => {
                 name="telefono"
                 value={form.telefono}
                 onChange={handleChange}
+                className={errores.telefono ? "input-error" : ""}
               />
+              {errores.telefono && (
+                <small className="error-text">{errores.telefono}</small>
+              )}
             </label>
 
             <label>
@@ -110,8 +180,11 @@ const RegisterPage = () => {
                 name="correo"
                 value={form.correo}
                 onChange={handleChange}
-                required
+                className={errores.correo ? "input-error" : ""}
               />
+              {errores.correo && (
+                <small className="error-text">{errores.correo}</small>
+              )}
             </label>
           </div>
 
@@ -122,8 +195,11 @@ const RegisterPage = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
-              required
+              className={errores.password ? "input-error" : ""}
             />
+            {errores.password && (
+              <small className="error-text">{errores.password}</small>
+            )}
           </label>
 
           <button type="submit" className="btn-primary" disabled={cargando}>
