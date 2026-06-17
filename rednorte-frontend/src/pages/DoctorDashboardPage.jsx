@@ -31,11 +31,31 @@ const DoctorDashboardPage = () => {
 
   return (
     <main>
-      <div className="card">
+      <div className="card doctor-dashboard">
         <div className="page-header">
           <div>
             <h1>Panel del Doctor</h1>
             <p>Consulta tus citas médicas asignadas.</p>
+            <div className="dashboard-stats">
+              <div className="stat-card">
+                <h3>{citas.length}</h3>
+                <p>Citas Asignadas</p>
+              </div>
+
+              <div className="stat-card">
+                <h3>
+                  {citas.filter(c => c.estadoCita === "RESERVADA").length}
+                </h3>
+                <p>Reservadas</p>
+              </div>
+
+              <div className="stat-card">
+                <h3>
+                  {citas.filter(c => c.estadoCita === "DISPONIBLE").length}
+                </h3>
+                <p>Disponibles</p>
+              </div>
+            </div>
           </div>
         </div>
 

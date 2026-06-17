@@ -60,31 +60,36 @@ const HomePage = () => {
               </>
             )}
           </div>
+          <div className="hero-features">
+            <span>Gestión de Pacientes</span>
+            <span>Gestión de Citas</span>
+            <span>Lista de Espera</span>
+          </div>
         </div>
       </section>
 
       <section className="home-info-grid">
         <div className="info-card">
-          <h2>Atención organizada</h2>
+          <h2>Gestión de Pacientes</h2>
           <p>
-            Centraliza la información clínica para mejorar el seguimiento de
-            pacientes y solicitudes médicas.
+            Registro y administración centralizada de pacientes para facilitar el
+            seguimiento clínico y mejorar la continuidad de atención.
           </p>
         </div>
 
         <div className="info-card">
-          <h2>Gestión eficiente</h2>
+          <h2>Administración de Citas</h2>
           <p>
-            Apoya la asignación de citas y la priorización de pacientes en lista
-            de espera.
+            Gestión de disponibilidad médica, reservas y control de citas para una
+            atención más eficiente y organizada.
           </p>
         </div>
 
         <div className="info-card">
-          <h2>Arquitectura moderna</h2>
+          <h2>Lista de Espera Inteligente</h2>
           <p>
-            Integración mediante frontend, BFF, microservicios y base de datos
-            persistente.
+            Priorización y gestión de pacientes en espera para optimizar recursos y
+            reducir tiempos de atención.
           </p>
         </div>
       </section>

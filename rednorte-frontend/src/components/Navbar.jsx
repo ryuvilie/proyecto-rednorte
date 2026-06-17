@@ -6,6 +6,17 @@ import {
   esDoctor,
 } from "../services/authService";
 
+import {
+  Home,
+  Users,
+  Calendar,
+  ClipboardList,
+  FileBarChart2,
+  UserRound,
+  LogOut,
+  LogIn,
+} from "lucide-react";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const session = obtenerSesion();
@@ -33,56 +44,67 @@ const Navbar = () => {
 
       <div className="navbar-links">
 
-        <NavLink to="/">Inicio</NavLink>
+        <NavLink to="/">
+          <Home size={18} />
+          <span>Inicio</span>
+        </NavLink>
 
         {session && admin && (
           <>
-            <NavLink to="/pacientes">Pacientes</NavLink>
-
-            <NavLink to="/lista-espera">
-              Lista de Espera
+            <NavLink to="/pacientes">
+              <Users size={18} />
+              <span>Pacientes</span>
             </NavLink>
 
-            <NavLink to="/citas">Citas</NavLink>
+            <NavLink to="/lista-espera">
+              <ClipboardList size={18} />
+              <span>Lista de Espera</span>
+            </NavLink>
 
-            <NavLink to="/reportes">
-              Reportes
+            <NavLink to="/citas">
+              <Calendar size={18} />
+              <span>Citas</span>
             </NavLink>
           </>
         )}
+
         {session && (admin || doctor) && (
-        <NavLink to="/reportes">
-          Reportes
-        </NavLink>
-      )}
+          <NavLink to="/reportes">
+            <FileBarChart2 size={18} />
+            <span>Reportes</span>
+          </NavLink>
+        )}
 
         {session && doctor && (
-          <>
-            <NavLink to="/doctor">
-              Panel Doctor
-            </NavLink>
-          </>
+          <NavLink to="/doctor">
+            <UserRound size={18} />
+            <span>Panel Doctor</span>
+          </NavLink>
         )}
 
         {session && !admin && !doctor && (
           <>
             <NavLink to="/lista-espera">
-              Mi Lista de Espera
+              <ClipboardList size={18} />
+              <span>Mi Lista de Espera</span>
             </NavLink>
 
             <NavLink to="/horas-disponibles">
-              Horas disponibles
+              <Calendar size={18} />
+              <span>Horas Disponibles</span>
             </NavLink>
 
             <NavLink to="/citas">
-              Mis Citas
+              <Calendar size={18} />
+              <span>Mis Citas</span>
             </NavLink>
           </>
         )}
 
         {!session && (
           <NavLink to="/login">
-            Ingresar
+            <LogIn size={18} />
+            <span>Ingresar</span>
           </NavLink>
         )}
 
@@ -91,7 +113,8 @@ const Navbar = () => {
             className="logout-button"
             onClick={handleLogout}
           >
-            Cerrar sesión
+            <LogOut size={18} />
+            <span>Cerrar sesión</span>
           </button>
         )}
 
