@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { obtenerCitas, eliminarCita } from "../services/citaService";
 import { Link } from "react-router-dom";
-import { esAdmin, obtenerSesion } from "../services/authService";
+import { esAdmin, obtenerSesion } from "../../../services/authService";
 
 const CitasPage = () => {
   const [citas, setCitas] = useState([]);

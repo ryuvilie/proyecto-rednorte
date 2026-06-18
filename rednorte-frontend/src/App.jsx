@@ -8,14 +8,14 @@ import RegisterPage from "./pages/RegisterPage";
 
 import PacientesPage from "./pages/PacientesPage";
 import ListaEsperaPage from "./pages/ListaEsperaPage";
-import CitasPage from "./pages/CitasPage";
+import CitasPage from "./modules/citas/pages/CitasPage";
 
 import ReportesPage from "./modules/reportes/pages/ReportesPage";
 
 import RegistroPacientePage from "./pages/RegistroPacientePage";
 import RegistroListaEsperaPage from "./pages/RegistroListaEsperaPage";
-import RegistroCitaPage from "./pages/RegistroCitaPage";
-import HorasDisponiblesPage from "./pages/HorasDisponiblesPage";
+import RegistroCitaPage from "./modules/citas/pages/RegistroCitaPage";
+import HorasDisponiblesPage from "./modules/citas/pages/HorasDisponiblesPage";
 import DoctorDashboardPage from "./pages/DoctorDashboardPage";
 
 function App() {

@@ -1,4 +1,4 @@
-import { bffApiClient } from "../api/apiClient";
+import { bffApiClient } from "../../../api/apiClient";
 
 export const obtenerHorasDisponibles = async () => {
   return await bffApiClient("/citas/disponibles");

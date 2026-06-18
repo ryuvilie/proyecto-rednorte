@@ -1,4 +1,4 @@
-import { bffApiClient } from "../api/apiClient";
+import { bffApiClient } from "../../../api/apiClient";
 
 export const obtenerCitas = () => {
   return bffApiClient("/citas");

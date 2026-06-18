@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerCitasDoctor } from "../services/citaService";
+import { obtenerCitasDoctor } from "../modules/citas/services/citaService";
 import { obtenerSesion } from "../services/authService";
 
 const DoctorDashboardPage = () => {

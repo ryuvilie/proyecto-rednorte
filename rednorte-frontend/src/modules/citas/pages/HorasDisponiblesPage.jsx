@@ -4,7 +4,7 @@ import {
   reservarHora,
   eliminarCita,
 } from "../services/disponibilidadService";
-import { obtenerSesion } from "../services/authService";
+import { obtenerSesion } from "../../../services/authService";
 
 const HorasDisponiblesPage = () => {
   const session = obtenerSesion();

@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { crearCita } from "../services/citaService";
-import { bffApiClient } from "../api/apiClient";
-import {
-  validarCampoObligatorio,
-  validarFecha,
-} from "../utils/validations";
+import { bffApiClient } from "../../../api/apiClient";
+import { validarCampoObligatorio, validarFecha } from "../../../utils/validations";
 
 const RegistroCitaPage = () => {
   const [doctores, setDoctores] = useState([]);
