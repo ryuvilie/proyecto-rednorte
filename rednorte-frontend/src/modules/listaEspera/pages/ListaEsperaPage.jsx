@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { obtenerListaEspera } from "../services/listaEsperaService";
-import { esAdmin, obtenerSesion } from "../services/authService";
+import { esAdmin, obtenerSesion } from "../../../services/authService";
 
 const ListaEsperaPage = () => {
   const [listaEspera, setListaEspera] = useState([]);

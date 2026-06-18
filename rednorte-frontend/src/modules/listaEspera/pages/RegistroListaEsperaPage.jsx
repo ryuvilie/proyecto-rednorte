@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { obtenerPacientes } from "../services/pacienteService";
+import { obtenerPacientes } from "../../../services/pacienteService";
 import { crearListaEspera } from "../services/listaEsperaService";
 import {
   validarCampoObligatorio,
   validarFecha,
-} from "../utils/validations";
+} from "../../../utils/validations";
 
 const RegistroListaEsperaPage = () => {
   const [pacientes, setPacientes] = useState([]);
