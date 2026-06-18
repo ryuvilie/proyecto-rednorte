@@ -6,7 +6,7 @@ import {
   validarTelefono,
   validarRut,
   validarFecha,
-} from "../utils/validations";
+} from  "../../../utils/validations";
 
 const RegistroPacientePage = () => {
   const [paciente, setPaciente] = useState({

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { obtenerPacientes } from "../../../services/pacienteService";
+import { obtenerPacientes } from "../../pacientes/services/pacienteService";
 import { crearListaEspera } from "../services/listaEsperaService";
 import {
   validarCampoObligatorio,

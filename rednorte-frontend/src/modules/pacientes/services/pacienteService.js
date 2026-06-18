@@ -1,5 +1,4 @@
-import { bffApiClient } from "../api/apiClient";
-
+import { bffApiClient } from "../../../api/apiClient";
 export const obtenerPacientes = () => {
   return bffApiClient("/pacientes");
 };
