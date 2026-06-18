@@ -10,7 +10,7 @@ import PacientesPage from "./pages/PacientesPage";
 import ListaEsperaPage from "./pages/ListaEsperaPage";
 import CitasPage from "./pages/CitasPage";
 
-import ReportesPage from "./pages/ReportesPage";
+import ReportesPage from "./modules/reportes/pages/ReportesPage";
 
 import RegistroPacientePage from "./pages/RegistroPacientePage";
 import RegistroListaEsperaPage from "./pages/RegistroListaEsperaPage";
