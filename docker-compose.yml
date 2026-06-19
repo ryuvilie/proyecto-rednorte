@@ -47,3 +47,10 @@ services:
       - "5173:80"
     depends_on:
       - api-gateway
+      
+  eureka-server:
+  build:
+    context: ./eureka-server
+  container_name: eureka-server
+  ports:
+    - "8761:8761"
