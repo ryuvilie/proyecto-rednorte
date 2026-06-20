@@ -57,7 +57,7 @@ const LoginPage = () => {
     <main className="auth-page">
       <section className="auth-card">
         <div className="auth-header">
-          <h1>Iniciar sesión</h1>
+          <h1>Iniciar sesión Profesor</h1>
           <p>Accede a la plataforma RedNorte según tu rol.</p>
         </div>
 
