@@ -11,6 +11,10 @@ import com.rednorte.gestionclinica.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import com.rednorte.gestionclinica.model.Cita;
+import com.rednorte.gestionclinica.repository.CitaRepository;
+
+import java.time.LocalTime;
 
 import java.time.LocalDate;
 
@@ -20,6 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final DoctorRepository doctorRepository;
     private final PacienteRepository pacienteRepository;
+    private final CitaRepository citaRepository;
 
     private final BCryptPasswordEncoder passwordEncoder =
             new BCryptPasswordEncoder();
@@ -27,11 +32,13 @@ public class DataInitializer implements CommandLineRunner {
     public DataInitializer(
             UsuarioRepository usuarioRepository,
             DoctorRepository doctorRepository,
-            PacienteRepository pacienteRepository
+            PacienteRepository pacienteRepository,
+            CitaRepository citaRepository
     ) {
         this.usuarioRepository = usuarioRepository;
         this.doctorRepository = doctorRepository;
         this.pacienteRepository = pacienteRepository;
+        this.citaRepository = citaRepository;
     }
 
     @Override
@@ -51,6 +58,8 @@ public class DataInitializer implements CommandLineRunner {
         crearDoctoresDemo();
 
         crearPacientesDemo();
+
+        crearCitasDemo();
 
         System.out.println("Datos iniciales RedNorte verificados correctamente.");
     }
@@ -359,5 +368,130 @@ public class DataInitializer implements CommandLineRunner {
 
                     return pacienteRepository.save(paciente);
                 });
+    }
+        private void crearCitasDemo() {
+
+        crearCitaDisponibleSiNoExiste(
+                "doctor1@rednorte.cl",
+                "Hospital RedNorte Central",
+                "Dra. Carolina Muñoz",
+                LocalDate.now().plusDays(1),
+                LocalTime.of(9, 0)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "doctor1@rednorte.cl",
+                "Hospital RedNorte Central",
+                "Dra. Carolina Muñoz",
+                LocalDate.now().plusDays(1),
+                LocalTime.of(10, 0)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "andres.perez@rednorte.cl",
+                "Centro Médico Norte",
+                "Dr. Andrés Pérez",
+                LocalDate.now().plusDays(2),
+                LocalTime.of(9, 30)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "andres.perez@rednorte.cl",
+                "Centro Médico Norte",
+                "Dr. Andrés Pérez",
+                LocalDate.now().plusDays(2),
+                LocalTime.of(11, 0)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "sofia.ramirez@rednorte.cl",
+                "Clínica Especializada RedNorte",
+                "Dra. Sofía Ramírez",
+                LocalDate.now().plusDays(3),
+                LocalTime.of(8, 30)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "sofia.ramirez@rednorte.cl",
+                "Clínica Especializada RedNorte",
+                "Dra. Sofía Ramírez",
+                LocalDate.now().plusDays(3),
+                LocalTime.of(12, 0)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "felipe.contreras@rednorte.cl",
+                "Hospital RedNorte Central",
+                "Dr. Felipe Contreras",
+                LocalDate.now().plusDays(4),
+                LocalTime.of(14, 0)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "felipe.contreras@rednorte.cl",
+                "Hospital RedNorte Central",
+                "Dr. Felipe Contreras",
+                LocalDate.now().plusDays(4),
+                LocalTime.of(15, 30)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "paula.fuentes@rednorte.cl",
+                "CESFAM RedNorte",
+                "Dra. Paula Fuentes",
+                LocalDate.now().plusDays(5),
+                LocalTime.of(10, 15)
+        );
+
+        crearCitaDisponibleSiNoExiste(
+                "paula.fuentes@rednorte.cl",
+                "CESFAM RedNorte",
+                "Dra. Paula Fuentes",
+                LocalDate.now().plusDays(5),
+                LocalTime.of(11, 15)
+        );
+
+        System.out.println("Citas demo verificadas correctamente.");
+    }
+
+    private void crearCitaDisponibleSiNoExiste(
+            String correoDoctor,
+            String establecimiento,
+            String medico,
+            LocalDate fechaCita,
+            LocalTime horaCita
+    ) {
+        Doctor doctor = doctorRepository.findAll()
+                .stream()
+                .filter(d -> correoDoctor.equals(d.getCorreo()))
+                .findFirst()
+                .orElse(null);
+
+        if (doctor == null) {
+            return;
+        }
+
+        boolean citaExiste = citaRepository.findAll()
+                .stream()
+                .anyMatch(cita ->
+                        cita.getDoctor() != null &&
+                        cita.getDoctor().getId().equals(doctor.getId()) &&
+                        cita.getFechaCita().equals(fechaCita) &&
+                        cita.getHoraCita().equals(horaCita)
+                );
+
+        if (!citaExiste) {
+
+            Cita cita = new Cita();
+
+            cita.setEstablecimiento(establecimiento);
+            // cita.setMedico(medico);
+            cita.setFechaCita(fechaCita);
+            cita.setHoraCita(horaCita);
+            cita.setEstadoCita("DISPONIBLE");
+            cita.setDoctor(doctor);
+
+            citaRepository.save(cita);
+        }
     }
 }
