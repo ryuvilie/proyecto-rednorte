@@ -1,29 +1,47 @@
 import { useEffect, useState } from "react";
 import {
-  obtenerReportes,
+  obtenerPacientesReporte,
+  obtenerListaEsperaReporte,
+  obtenerCitasReporte,
   obtenerNotificaciones,
 } from "../services/reporteService";
 
 const ReportesPage = () => {
-
-  const [reportes, setReportes] = useState([]);
+  const [pacientes, setPacientes] = useState([]);
+  const [listaEspera, setListaEspera] = useState([]);
+  const [citas, setCitas] = useState([]);
   const [notificaciones, setNotificaciones] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const cargarDatos = async () => {
-
     try {
+      setLoading(true);
+      setError("");
 
-      const dataReportes = await obtenerReportes();
-      const dataNotificaciones = await obtenerNotificaciones();
+      const [
+        dataPacientes,
+        dataListaEspera,
+        dataCitas,
+        dataNotificaciones,
+      ] = await Promise.all([
+        obtenerPacientesReporte(),
+        obtenerListaEsperaReporte(),
+        obtenerCitasReporte(),
+        obtenerNotificaciones(),
+      ]);
 
-      setReportes(dataReportes);
-      setNotificaciones(dataNotificaciones);
-
+      setPacientes(Array.isArray(dataPacientes) ? dataPacientes : []);
+      setListaEspera(Array.isArray(dataListaEspera) ? dataListaEspera : []);
+      setCitas(Array.isArray(dataCitas) ? dataCitas : []);
+      setNotificaciones(
+        Array.isArray(dataNotificaciones) ? dataNotificaciones : []
+      );
     } catch (error) {
-
-      console.error("Error al cargar datos:", error);
-      alert("Error al cargar reportes y notificaciones");
-
+      console.error("Error al cargar reportes:", error);
+      setError("No se pudieron cargar los indicadores del sistema.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,113 +49,229 @@ const ReportesPage = () => {
     cargarDatos();
   }, []);
 
-  const totalReportes = reportes.length;
+  const obtenerEstadoCita = (cita) => {
+    return cita.estadoCita || cita.estado_cita || "";
+  };
 
-  const totalSolicitudes = reportes.reduce(
-    (total, reporte) => total + (reporte.totalSolicitudes || 0),
-    0
+  const citasDisponibles = citas.filter(
+    (cita) => obtenerEstadoCita(cita).toUpperCase() === "DISPONIBLE"
   );
 
-  const totalCitas = reportes.reduce(
-    (total, reporte) => total + (reporte.totalCitas || 0),
-    0
+  const citasReservadas = citas.filter(
+    (cita) =>
+      obtenerEstadoCita(cita).toUpperCase() === "RESERVADA" ||
+      obtenerEstadoCita(cita).toUpperCase() === "ASIGNADA"
   );
+
+  const solicitudesAlta = listaEspera.filter(
+    (item) => item.prioridad?.toUpperCase() === "ALTA"
+  );
+
+  const solicitudesMedia = listaEspera.filter(
+    (item) => item.prioridad?.toUpperCase() === "MEDIA"
+  );
+
+  const solicitudesBaja = listaEspera.filter(
+    (item) => item.prioridad?.toUpperCase() === "BAJA"
+  );
+
+  const resumenEspecialidades = listaEspera.reduce((acumulador, item) => {
+    const especialidad = item.especialidad || "Sin especialidad";
+
+    if (!acumulador[especialidad]) {
+      acumulador[especialidad] = {
+        especialidad,
+        solicitudes: 0,
+        prioridadAlta: 0,
+        prioridadMedia: 0,
+        prioridadBaja: 0,
+      };
+    }
+
+    acumulador[especialidad].solicitudes += 1;
+
+    if (item.prioridad?.toUpperCase() === "ALTA") {
+      acumulador[especialidad].prioridadAlta += 1;
+    }
+
+    if (item.prioridad?.toUpperCase() === "MEDIA") {
+      acumulador[especialidad].prioridadMedia += 1;
+    }
+
+    if (item.prioridad?.toUpperCase() === "BAJA") {
+      acumulador[especialidad].prioridadBaja += 1;
+    }
+
+    return acumulador;
+  }, {});
+
+  const tablaEspecialidades = Object.values(resumenEspecialidades);
+
+  if (loading) {
+    return (
+      <main>
+        <div className="card">
+          <h1>Reportes del Sistema</h1>
+          <p>Cargando indicadores del sistema...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
-
       <div className="card">
-
         <h1>Reportes del Sistema</h1>
 
         <p>
-          Panel administrativo con indicadores del sistema hospitalario RedNorte.
+          Panel administrativo con indicadores calculados desde los datos reales
+          del sistema hospitalario RedNorte.
         </p>
 
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+
         <div className="report-grid">
-
           <div className="report-card">
-
-            <h2>Total Reportes</h2>
+            <h2>Total Pacientes</h2>
 
             <div className="report-number">
-              {totalReportes}
+              {pacientes.length}
             </div>
 
             <p className="report-description">
-              Reportes registrados en el sistema.
+              Pacientes registrados en el sistema.
             </p>
-
           </div>
 
           <div className="report-card">
-
-            <h2>Total Solicitudes</h2>
+            <h2>Lista de Espera</h2>
 
             <div className="report-number">
-              {totalSolicitudes}
+              {listaEspera.length}
             </div>
 
             <p className="report-description">
-              Solicitudes procesadas en listas de espera.
+              Solicitudes activas registradas en lista de espera.
             </p>
-
           </div>
 
           <div className="report-card">
-
             <h2>Total Citas</h2>
 
             <div className="report-number">
-              {totalCitas}
+              {citas.length}
             </div>
 
             <p className="report-description">
-              Citas médicas registradas.
+              Citas médicas registradas en el sistema.
             </p>
-
           </div>
 
+          <div className="report-card">
+            <h2>Citas Disponibles</h2>
+
+            <div className="report-number">
+              {citasDisponibles.length}
+            </div>
+
+            <p className="report-description">
+              Horas médicas disponibles para asignación.
+            </p>
+          </div>
+
+          <div className="report-card">
+            <h2>Citas Reservadas</h2>
+
+            <div className="report-number">
+              {citasReservadas.length}
+            </div>
+
+            <p className="report-description">
+              Citas ya asignadas o reservadas.
+            </p>
+          </div>
+
+          <div className="report-card">
+            <h2>Prioridad Alta</h2>
+
+            <div className="report-number">
+              {solicitudesAlta.length}
+            </div>
+
+            <p className="report-description">
+              Solicitudes críticas en lista de espera.
+            </p>
+          </div>
         </div>
 
+        <h1 style={{ marginTop: "36px" }}>
+          Resumen de solicitudes por prioridad
+        </h1>
+
+        <div className="report-grid">
+          <div className="report-card">
+            <h2>Alta</h2>
+            <div className="report-number">{solicitudesAlta.length}</div>
+            <p className="report-description">Atención prioritaria.</p>
+          </div>
+
+          <div className="report-card">
+            <h2>Media</h2>
+            <div className="report-number">{solicitudesMedia.length}</div>
+            <p className="report-description">Atención pendiente.</p>
+          </div>
+
+          <div className="report-card">
+            <h2>Baja</h2>
+            <div className="report-number">{solicitudesBaja.length}</div>
+            <p className="report-description">Atención no urgente.</p>
+          </div>
+        </div>
+
+        <h1 style={{ marginTop: "36px" }}>
+          Indicadores por especialidad
+        </h1>
+
+        <p>
+          Resumen generado automáticamente a partir de las listas de espera.
+        </p>
+
         <div className="report-table-container">
-
           <table className="report-table">
-
             <thead>
-
               <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Fecha</th>
+                <th>Especialidad</th>
                 <th>Solicitudes</th>
-                <th>Citas</th>
-                <th>Tiempo Promedio</th>
+                <th>Alta</th>
+                <th>Media</th>
+                <th>Baja</th>
               </tr>
-
             </thead>
 
             <tbody>
-
-              {reportes.map((reporte) => (
-
-                <tr key={reporte.id}>
-
-                  <td>{reporte.id}</td>
-                  <td>{reporte.tipoReporte}</td>
-                  <td>{reporte.fechaReporte}</td>
-                  <td>{reporte.totalSolicitudes}</td>
-                  <td>{reporte.totalCitas}</td>
-                  <td>{reporte.tiempoPromedioEspera} días</td>
-
+              {tablaEspecialidades.length > 0 ? (
+                tablaEspecialidades.map((item) => (
+                  <tr key={item.especialidad}>
+                    <td>{item.especialidad}</td>
+                    <td>{item.solicitudes}</td>
+                    <td>{item.prioridadAlta}</td>
+                    <td>{item.prioridadMedia}</td>
+                    <td>{item.prioridadBaja}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5">
+                    No existen solicitudes en lista de espera.
+                  </td>
                 </tr>
-
-              ))}
-
+              )}
             </tbody>
-
           </table>
-
         </div>
 
         <h1 style={{ marginTop: "36px" }}>
@@ -149,42 +283,38 @@ const ReportesPage = () => {
         </p>
 
         <ul className="waitlist-list">
+          {notificaciones.length > 0 ? (
+            notificaciones.map((notificacion) => (
+              <li
+                key={notificacion.id}
+                className="waitlist-item"
+              >
+                <div className="waitlist-header">
+                  <span className="waitlist-paciente">
+                    {notificacion.tipo || "Notificación"}
+                  </span>
 
-          {notificaciones.map((notificacion) => (
+                  <span className="status-badge estado-asignada">
+                    {notificacion.estadoEnvio || "Registrada"}
+                  </span>
+                </div>
 
-            <li
-              key={notificacion.id}
-              className="waitlist-item"
-            >
-
-              <div className="waitlist-header">
-
-                <span className="waitlist-paciente">
-                  {notificacion.tipo}
+                <span>
+                  {notificacion.mensaje || "Sin mensaje registrado"}
                 </span>
 
-                <span className="status-badge estado-asignada">
-                  {notificacion.estadoEnvio}
+                <span className="waitlist-meta">
+                  Fecha: {notificacion.fechaEnvio || "Sin fecha"}
                 </span>
-
-              </div>
-
-              <span>
-                {notificacion.mensaje}
-              </span>
-
-              <span className="waitlist-meta">
-                Fecha: {notificacion.fechaEnvio}
-              </span>
-
+              </li>
+            ))
+          ) : (
+            <li className="waitlist-item">
+              No existen notificaciones recientes.
             </li>
-
-          ))}
-
+          )}
         </ul>
-
       </div>
-
     </main>
   );
 };
