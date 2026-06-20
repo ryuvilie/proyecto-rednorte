@@ -1,5 +1,13 @@
 services:
 
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    restart: always
+
   gestionclinica:
     build:
       context: ./gestionclinica
@@ -8,6 +16,9 @@ services:
       - "8081:8081"
     environment:
       SPRING_PROFILES_ACTIVE: aws
+    depends_on:
+      - eureka-server
+    restart: always
 
   gestionsoporte:
     build:
@@ -17,6 +28,9 @@ services:
       - "8082:8082"
     environment:
       SPRING_PROFILES_ACTIVE: aws
+    depends_on:
+      - eureka-server
+    restart: always
 
   bff:
     build:
@@ -27,8 +41,10 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: aws
     depends_on:
+      - eureka-server
       - gestionclinica
       - gestionsoporte
+    restart: always
 
   api-gateway:
     build:
@@ -36,21 +52,22 @@ services:
     container_name: api-gateway
     ports:
       - "8085:8085"
+    environment:
+      BFF_URL: http://bff:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
     depends_on:
+      - eureka-server
       - bff
+    restart: always
 
   frontend:
     build:
       context: ./rednorte-frontend
+      args:
+        VITE_API_BFF_URL: http://32.197.111.18:8085/api/bff
     container_name: frontend
     ports:
       - "5173:80"
     depends_on:
       - api-gateway
-      
-  eureka-server:
-  build:
-    context: ./eureka-server
-  container_name: eureka-server
-  ports:
-    - "8761:8761"
+    restart: always

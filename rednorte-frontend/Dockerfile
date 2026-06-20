@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
+ARG VITE_API_BFF_URL
+ENV VITE_API_BFF_URL=$VITE_API_BFF_URL
+
 RUN npm run build
 
 

@@ -156,27 +156,38 @@ public class DataInitializer implements CommandLineRunner {
                 telefono
         );
 
-        if (!usuarioRepository.existsByCorreo(correo)) {
+        boolean existeUsuarioConCorreo = usuarioRepository.existsByCorreo(correo);
 
-            Usuario usuarioDoctor = new Usuario();
+        boolean doctorYaTieneUsuario = usuarioRepository.findAll()
+                .stream()
+                .anyMatch(usuario ->
+                        usuario.getDoctor() != null &&
+                        usuario.getDoctor().getId() != null &&
+                        usuario.getDoctor().getId().equals(doctor.getId())
+                );
 
-            usuarioDoctor.setNombre(nombreUsuario);
-            usuarioDoctor.setCorreo(correo);
-            usuarioDoctor.setPassword(passwordEncoder.encode("1234"));
-
-            usuarioDoctor.setRol(RolUsuario.DOCTOR);
-            usuarioDoctor.setEstado(EstadoUsuario.ACTIVO);
-
-            usuarioDoctor.setDoctor(doctor);
-
-            usuarioDoctor.setPuedeGestionarUsuarios(false);
-            usuarioDoctor.setPuedeGestionarPacientes(false);
-            usuarioDoctor.setPuedeGestionarCitas(false);
-            usuarioDoctor.setPuedeGestionarListaEspera(false);
-            usuarioDoctor.setPuedeGestionarReportes(false);
-
-            usuarioRepository.save(usuarioDoctor);
+        if (existeUsuarioConCorreo || doctorYaTieneUsuario) {
+            return;
         }
+
+        Usuario usuarioDoctor = new Usuario();
+
+        usuarioDoctor.setNombre(nombreUsuario);
+        usuarioDoctor.setCorreo(correo);
+        usuarioDoctor.setPassword(passwordEncoder.encode("1234"));
+
+        usuarioDoctor.setRol(RolUsuario.DOCTOR);
+        usuarioDoctor.setEstado(EstadoUsuario.ACTIVO);
+
+        usuarioDoctor.setDoctor(doctor);
+
+        usuarioDoctor.setPuedeGestionarUsuarios(false);
+        usuarioDoctor.setPuedeGestionarPacientes(false);
+        usuarioDoctor.setPuedeGestionarCitas(false);
+        usuarioDoctor.setPuedeGestionarListaEspera(false);
+        usuarioDoctor.setPuedeGestionarReportes(false);
+
+        usuarioRepository.save(usuarioDoctor);
     }
 
     private Doctor obtenerOCrearDoctor(
@@ -321,27 +332,38 @@ public class DataInitializer implements CommandLineRunner {
                 fechaNacimiento
         );
 
-        if (!usuarioRepository.existsByCorreo(correo)) {
+        boolean existeUsuarioConCorreo = usuarioRepository.existsByCorreo(correo);
 
-            Usuario usuarioPaciente = new Usuario();
+        boolean pacienteYaTieneUsuario = usuarioRepository.findAll()
+                .stream()
+                .anyMatch(usuario ->
+                        usuario.getPaciente() != null &&
+                        usuario.getPaciente().getId() != null &&
+                        usuario.getPaciente().getId().equals(paciente.getId())
+                );
 
-            usuarioPaciente.setNombre(nombre + " " + apellido);
-            usuarioPaciente.setCorreo(correo);
-            usuarioPaciente.setPassword(passwordEncoder.encode("1234"));
-
-            usuarioPaciente.setRol(RolUsuario.PACIENTE);
-            usuarioPaciente.setEstado(EstadoUsuario.ACTIVO);
-
-            usuarioPaciente.setPaciente(paciente);
-
-            usuarioPaciente.setPuedeGestionarUsuarios(false);
-            usuarioPaciente.setPuedeGestionarPacientes(false);
-            usuarioPaciente.setPuedeGestionarCitas(false);
-            usuarioPaciente.setPuedeGestionarListaEspera(false);
-            usuarioPaciente.setPuedeGestionarReportes(false);
-
-            usuarioRepository.save(usuarioPaciente);
+        if (existeUsuarioConCorreo || pacienteYaTieneUsuario) {
+            return;
         }
+
+        Usuario usuarioPaciente = new Usuario();
+
+        usuarioPaciente.setNombre(nombre + " " + apellido);
+        usuarioPaciente.setCorreo(correo);
+        usuarioPaciente.setPassword(passwordEncoder.encode("1234"));
+
+        usuarioPaciente.setRol(RolUsuario.PACIENTE);
+        usuarioPaciente.setEstado(EstadoUsuario.ACTIVO);
+
+        usuarioPaciente.setPaciente(paciente);
+
+        usuarioPaciente.setPuedeGestionarUsuarios(false);
+        usuarioPaciente.setPuedeGestionarPacientes(false);
+        usuarioPaciente.setPuedeGestionarCitas(false);
+        usuarioPaciente.setPuedeGestionarListaEspera(false);
+        usuarioPaciente.setPuedeGestionarReportes(false);
+
+        usuarioRepository.save(usuarioPaciente);
     }
 
     private Paciente obtenerOCrearPaciente(
